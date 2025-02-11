@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Language Class</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-image: url('https://lh3.googleusercontent.com/YHK8s0v4r6nQC6NxM5BrS3E_xBRnS91Z0MzTMubZQhw6HTUa7437SuYkSgTwIgIlmYn6WPmf1cO24VV-ymqo351aUZCZLnZGBquchhqZuVUweZgEpKLQ4alg5MJRIf0IwQ_rAC9cW6hESnLxbwW5w1GOKBDMyJ1nCOOAf-wi-H_iuQ8oLE37kKQojL5tDw');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            height: 100vh;
+            width: 100vw;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center text-white">
+    <!-- Header -->
+    <header class="absolute top-0 w-full bg-black/50 backdrop-blur-md py-4">
+        <div class="container mx-auto flex items-center justify-between px-8">
+            <h1 class="text-2xl font-bold text-yellow-400">Sign Language Class</h1>
+            <nav>
+                <a href="{% url 'login' %}" class="text-gray-200 hover:text-yellow-400 mx-4">Login</a>
+                <a href="{% url 'register' %}" class="bg-yellow-400 text-black px-4 py-2 rounded hover:bg-yellow-500 transition">Register</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="text-center">
+        <h2 class="text-5xl font-bold mb-4 animate-pulse drop-shadow-lg">Belajar Bahasa Isyarat Online</h2>
+        <p class="text-xl mb-8 drop-shadow-lg">Gabung dengan komunitas kami untuk pengalaman belajar melalui konferensi video real-time.</p>
+        {% comment %} <a href="{% url 'register' %}" class="bg-yellow-400 text-blue-900 px-8 py-4 rounded-lg font-semibold hover:bg-yellow-500 transition drop-shadow-lg">Daftar Sekarang</a> {% endcomment %}
+    </section>
+
+    <!-- Footer -->
+    <footer class="absolute bottom-0 w-full bg-black/50 text-white py-4 text-center backdrop-blur-md">
+        <p>&copy; 2025 Sign Language Class. All rights reserved.</p>
+    </footer>
+</body>
+</html>

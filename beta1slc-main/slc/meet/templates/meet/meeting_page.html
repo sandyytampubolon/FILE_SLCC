@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting: {{ meeting.title }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .bg-blur {
+            backdrop-filter: blur(10px);
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="h-screen w-screen flex items-center justify-center bg-cover bg-center" 
+      style="background-image: url('https://lh3.googleusercontent.com/YHK8s0v4r6nQC6NxM5BrS3E_xBRnS91Z0MzTMubZQhw6HTUa7437SuYkSgTwIgIlmYn6WPmf1cO24VV-ymqo351aUZCZLnZGBquchhqZuVUweZgEpKLQ4alg5MJRIf0IwQ_rAC9cW6hESnLxbwW5w1GOKBDMyJ1nCOOAf-wi-H_iuQ8oLE37kKQojL5tDw');">
+
+    <!-- Video Grid Section -->
+    <div class="flex space-x-8">
+        <div class="bg-blur rounded-xl w-[800px] h-[450px] flex items-center justify-center">
+            <video id="local-video" autoplay playsinline muted class="rounded-xl w-full h-full"></video>
+        </div>
+        <div class="bg-blur rounded-xl w-[300px] h-[200px] flex items-center justify-center">
+            <video id="remote-video" autoplay playsinline class="rounded-xl w-full h-full"></video>
+        </div>
+    </div>
+
+    <!-- Control Buttons -->
+    <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 bg-blur rounded-full px-6 py-3 flex space-x-6">
+        <button id="btn-toggle-video" class="focus:outline-none"><i class="fas fa-video text-white text-2xl"></i></button>
+        <button id="btn-toggle-audio" class="focus:outline-none"><i class="fas fa-microphone text-white text-2xl"></i></button>
+        <button id="btn-share-screen" class="focus:outline-none"><i class="fas fa-desktop text-white text-2xl"></i></button>
+        <button id="btn-chat" class="focus:outline-none"><i class="fas fa-comment text-white text-2xl"></i></button>
+    </div>
+
+    <!-- Chat Popup -->
+    <div id="chat-popup" class="fixed bottom-20 right-10 w-80 h-96 bg-white rounded-lg shadow-lg p-4 hidden flex flex-col">
+        <div class="popup-header font-bold text-lg mb-2 flex justify-between items-center">
+            Chat
+            <button id="close-chat" class="text-gray-500 hover:text-gray-700">&times;</button>
+        </div>
+        <div id="message-list" class="flex-1 overflow-y-auto p-2 border rounded bg-gray-100"></div>
+        <div class="mt-2 flex">
+            <input id="chat-input" type="text" class="flex-1 border p-2 rounded-l focus:outline-none" placeholder="Type a message...">
+            <button id="send-chat" class="bg-blue-500 text-white px-4 py-2 rounded-r hover:bg-blue-600">Send</button>
+        </div>
+    </div>
+
+    <!-- Participants Button -->
+    <button id="participants-button" class="absolute bottom-10 right-10 bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-600">
+        <i class="fas fa-users"></i> Participants
+    </button>
+
+    <!-- Participants Popup -->
+    <div id="participants-popup" class="fixed bottom-20 right-10 w-72 h-80 bg-white rounded-xl shadow-xl p-5 hidden">
+        <div class="popup-header font-bold text-lg mb-4 text-gray-700 flex justify-between items-center">
+            Participants
+            <button id="close-participants" class="text-gray-500 hover:text-red-500"><i class="fas fa-times"></i></button>
+        </div>
+        <ul id="participants-list" class="popup-body overflow-y-auto h-56 space-y-2"></ul>
+    </div>
+
+    <!-- Script -->
+    <script>
+        document.getElementById('btn-chat').addEventListener('click', function() {
+            document.getElementById('chat-popup').classList.toggle('hidden');
+        });
+
+        document.getElementById('close-chat').addEventListener('click', function() {
+            document.getElementById('chat-popup').classList.add('hidden');
+        });
+
+        document.getElementById('participants-button').addEventListener('click', function() {
+            document.getElementById('participants-popup').classList.toggle('hidden');
+        });
+
+        document.getElementById('close-participants').addEventListener('click', function() {
+            document.getElementById('participants-popup').classList.add('hidden');
+        });
+    </script>
+    <div class="absolute bottom-8 left-8">
+    <button onclick="window.location.href='{% url 'new_meet' %}'" type="button" class="flex items-center bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 focus:outline-none">
+    <i class="fas fa-sign-out-alt mr-2"></i>
+    <span>End Meet</span>
+</button>
+</div>
+
+</body>
+</html>

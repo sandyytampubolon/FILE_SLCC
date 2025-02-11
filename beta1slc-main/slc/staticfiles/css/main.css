@@ -1,0 +1,53 @@
+.main-grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 16px;
+}
+.meeting-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Creates consistent spacing between elements */
+}
+#video-container {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 0; /* Remove any bottom margin that might create extra space */
+}
+
+.video-wrapper {
+    position: relative;
+    width: 400px;
+    margin: 0 auto;
+    background-color: #000;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#controls-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 0;
+}
+.remote-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 25%;
+    background-color: black;
+}
+
+video {
+    border-radius: 25%;
+    background-color: black;
+}

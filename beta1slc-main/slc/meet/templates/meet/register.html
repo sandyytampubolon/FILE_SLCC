@@ -1,0 +1,43 @@
+<html>
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        .bg-blur {
+            backdrop-filter: blur(10px);
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="h-screen w-screen bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/YHK8s0v4r6nQC6NxM5BrS3E_xBRnS91Z0MzTMubZQhw6HTUa7437SuYkSgTwIgIlmYn6WPmf1cO24VV-ymqo351aUZCZLnZGBquchhqZuVUweZgEpKLQ4alg5MJRIf0IwQ_rAC9cW6hESnLxbwW5w1GOKBDMyJ1nCOOAf-wi-H_iuQ8oLE37kKQojL5tDw');">
+    <div class="flex items-center justify-center h-full">
+        <div class="bg-blur rounded-xl w-[400px] p-8 flex flex-col items-center space-y-6">
+            <h2 class="text-2xl font-bold text-white">Daftar</h2>
+            <form method="POST" class="w-full flex flex-col space-y-4">
+                {% csrf_token %}
+                <div>
+                    <label for="username" class="text-white">Nama Pengguna</label>
+                    <input id="username" type="text" name="username" placeholder="Nama Pengguna" required class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label for="email" class="text-white">Alamat Email</label>
+                    <input id="email" type="email" name="email" placeholder="Alamat Email" required class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label for="password" class="text-white">Kata Sandi</label>
+                    <input id="password" type="password" name="password" placeholder="Kata Sandi" required class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label for="phone" class="text-white">Nomor Handphone</label>
+                    <input id="phone" type="tel" placeholder="Masukkan Nomor Handphone" class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" maxlength="12" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 12);">
+                </div>
+                <button type="submit" class="w-full py-3 bg-gradient-to-r from-blue-500 to-green-500 text-white font-bold rounded hover:opacity-80">Daftar</button>
+            </form>
+            <p class="text-white text-center mt-4">
+                Already have an account? 
+                <a href="{% url 'login' %}" class="text-blue-400 hover:text-blue-600 font-semibold">Login here</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
