@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting: {{ meeting.title }}</title>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+
+    <style>
+.bg-blur {
+    backdrop-filter: blur(10px);
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* Video Lokal Fullscreen di belakang */
+#local-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1; /* Video lokal berada di belakang UI */
+}
+
+/* Kotak "Participants" */
+#participants-box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 10px;
+    max-width: 320px;
+    z-index: 2; /* Video remote di depan video lokal */
+    border-radius: 10px;
+}
+
+/* Judul "Participants" */
+#participants-box .text-white {
+    font-size: 1.2rem; /* Ukuran font judul */
+    font-weight: bold;
+}
+
+/* Remote Video Styling */
+.remote-video {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+/* Nama Peserta di pojok kiri atas video */
+.participant-name {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.6); /* Background semi-transparan */
+    padding: 2px 5px;
+    border-radius: 3px;
+}
+
+    </style>
+</head>
+<body class="h-screen w-screen flex items-center justify-center bg-cover bg-center" 
+      style="background-image: url('https://lh3.googleusercontent.com/YHK8s0v4r6nQC6NxM5BrS3E_xBRnS91Z0MzTMubZQhw6HTUa7437SuYkSgTwIgIlmYn6WPmf1cO24VV-ymqo351aUZCZLnZGBquchhqZuVUweZgEpKLQ4alg5MJRIf0IwQ_rAC9cW6hESnLxbwW5w1GOKBDMyJ1nCOOAf-wi-H_iuQ8oLE37kKQojL5tDw');">
+
+<div id="video-container" class="fixed inset-0 grid grid-cols-1 grid-rows-1 gap-2">
+    <!-- Wrapper untuk video lokal -->
+    <div id="local-video-wrapper" class="video-wrapper">
+        <video id="local-video" autoplay playsinline class="video-element border border-white rounded-lg"></video>
+    </div>
+    
+    <!-- Kontainer untuk Video Remote -->
+    <div id="participants-box" class="absolute bottom-10 right-10 p-4 bg-gray-800 bg-opacity-80 rounded-lg">
+        <!-- Judul untuk kolom video remote -->
+        <div class="text-center text-white font-bold mb-2">Participants</div>
+        
+        <!-- Daftar peserta akan ditambahkan di sini -->
+        <div id="participants-list" class="flex flex-col gap-2"></div>
+        
+        <!-- Video remote akan ditambahkan di sini -->
+        <div id="remote-videos" class="grid grid-cols-1 grid-rows-1 gap-2"></div>
+    </div>
+</div>
+
+
+
+    <!-- Username Form -->
+    <div id="form-container" class="absolute top-10 left-1/2 transform -translate-x-1/2 z-10">
+        <label for="username" id="username-label" class="text-white">Username:</label>
+        <input id="username" type="text" class="border p-2 rounded" placeholder="Enter your username">
+        <button id="btn-join" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Join Meeting</button>
+    </div>
+
+    <!-- Username Display -->
+    <div id="username-display" class="hidden absolute bottom-20 left-10 bg-blur text-white px-4 py-2 rounded-lg z-20">
+        <i class="fas fa-user mr-2"></i><span id="displayed-username"></span>
+    </div>
+
+    <script>
+        document.getElementById('btn-join').addEventListener('click', function() {
+            const usernameInput = document.getElementById('username').value;
+            
+            if (usernameInput.trim() !== "") {
+                document.getElementById('displayed-username').textContent = usernameInput;
+                document.getElementById('username-display').classList.remove('hidden');
+                document.getElementById('form-container').classList.add('hidden');
+            } else {
+                alert("Please enter a username before joining.");
+            }
+        });
+
+        let localVideo = document.getElementById('local-video');
+        let remoteVideos = document.getElementById('remote-videos');
+
+
+
+function addRemoteVideoStream(stream, participantName) {
+    const videoWrapper = document.createElement('div');
+    videoWrapper.classList.add('relative'); // Membuat video relative untuk penempatan nama
+    
+    const video = document.createElement('video');
+    video.srcObject = stream;
+    video.autoplay = true;
+    video.playsinline = true;
+    video.classList.add('remote-video');
+    
+    // Cek apakah nama peserta sudah ada sebelumnya
+    let nameLabel = videoWrapper.querySelector('.participant-name');
+    if (!nameLabel) {
+        // Jika belum ada, buat elemen nama
+        nameLabel = document.createElement('div');
+        nameLabel.classList.add('participant-name');
+        nameLabel.textContent = participantName;
+    }
+    
+    // Menambahkan nama dan video ke dalam wrapper
+    videoWrapper.appendChild(video);
+    videoWrapper.appendChild(nameLabel);
+    
+    // Menambahkan video dan nama ke dalam container remote-videos
+    document.getElementById('remote-videos').appendChild(videoWrapper);
+}
+
+
+
+
+        // Menyesuaikan layout video
+        function adjustLayout() {
+            const remoteVideoCount = remoteVideos.children.length;
+
+            if (remoteVideoCount > 0) {
+                document.getElementById('local-video').style.zIndex = '-1'; // Menjaga video lokal di belakang
+                remoteVideos.style.display = 'grid';
+                remoteVideos.style.gridTemplateColumns = '1fr 1fr';
+                remoteVideos.style.gridTemplateRows = '1fr 1fr';
+            } else {
+                document.getElementById('local-video').style.zIndex = '0'; // Video lokal muncul di depan saat tidak ada video remote
+            }
+        }
+
+        // Mengambil media lokal (video) untuk ditampilkan
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
+            localVideo.srcObject = stream;
+        }).catch((err) => console.error("Error accessing camera:", err));
+    </script>
+
+    <!-- Control Buttons -->
+    <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 bg-blur rounded-full px-6 py-3 flex space-x-6 z-20">
+        <button id="btn-toggle-video" class="focus:outline-none"><i class="fas fa-video text-white text-2xl"></i></button>
+        <button id="btn-toggle-audio" class="focus:outline-none"><i class="fas fa-microphone text-white text-2xl"></i></button>
+        <button id="btn-share-screen" class="focus:outline-none"><i class="fas fa-desktop text-white text-2xl"></i></button>
+        <button id="btn-chat" class="focus:outline-none"><i class="fas fa-comment text-white text-2xl"></i></button>
+    </div>
+
+    <!-- Chat Popup -->
+    <div id="chat-popup" class="fixed bottom-20 right-10 w-80 h-96 bg-white rounded-lg shadow-lg p-4 hidden flex flex-col">
+        <div class="popup-header font-bold text-lg mb-2 flex justify-between items-center">
+            Chat
+            <button id="close-chat" class="text-gray-500 hover:text-gray-700">&times;</button>
+        </div>
+        <div id="message-list" class="flex-1 overflow-y-auto p-2 border rounded bg-gray-100"></div>
+        <div class="mt-2 flex">
+            <input id="chat-input" type="text" class="flex-1 border p-2 rounded-l focus:outline-none" placeholder="Type a message...">
+            <button id="send-chat" class="bg-blue-500 text-white px-4 py-2 rounded-r hover:bg-blue-600">Send</button>
+        </div>
+    </div>
+
+    <!-- End Meeting Button -->
+    <div class="absolute bottom-8 left-8 z-30">
+        <form action="{% url 'new_meet' %}" method="POST">
+            {% csrf_token %}
+            <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none">
+                <i class="fas fa-sign-out-alt mr-2"></i>
+                <span>End Meet</span>
+            </button>   
+        </form>
+    </div>
+
+    <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
